@@ -8,7 +8,7 @@ In the project directory, you can run:
 
 ### `npm install` or `yarn`
 
-Install all the dependencies needed in order to run the application.\
+Install all the dependencies needed in order to run the application.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
