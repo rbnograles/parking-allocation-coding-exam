@@ -47,5 +47,12 @@ export const paymentRates = [
         type: "LP",
         label: "100 Pesos / Hour",
         prices: 100
+    },
+    {
+        type: "Over 24 Hours",
+        label: "5000 Pesos / 24 Hour",
+        prices: 100
     }
 ]
+
+export const entryPointsChoices = ["Gate A", "Gate B", "Gate C"]

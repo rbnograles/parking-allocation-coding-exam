@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 // constacts
-import { defaultActions, defaultVehicleTypes } from "../constants/choices";
-import { ParkingSlots } from '../constants/parkingslots';
+import { defaultActions, defaultVehicleTypes, entryPointsChoices } from "../constants/choices";
+import { ParkingSlots, parkingHistoryList } from '../constants/parkingslots';
 // components
 import Menu from './Menu/Menu';
 import EntrySelection from './Entry/EntrySelection';
 import UnPark from './Exit/UnPark';
 import Vehicle from './Vehicle/Vehicle';
 import ParkingMap from './ParkingMap/ParkingMap';
+import Pricing from './Pricing/Pricing';
+import ExitDialog from './Exit/UnparkingModal';
 
 // reusable components
 import BasicCard from './Vehicle/TransactionCompleteCard';
@@ -17,14 +19,18 @@ const Parking = () => {
     
     const [choicesSelection, setChoicesSelection] = useState([]);
     const [vehicleTypes, setvehicleTypes] = useState([]);
-    const [entryPoints, setEntryPoints] = useState(["Gate A", "Gate B", "Gate C"]);
+    const [entryPoints, setEntryPoints] = useState([]);
     const [parkingComplex, setParkingComplex] = useState([]);
+    const [parkingHistory, setParkingHistory] = useState([]);
 
     const [selectedChoice, setSelectedChoices] = useState("")
     const [selectedEntryPoint, setSelectedEntryPoint] = useState("");
     const [selectedSlot, setSelectedSlot] = useState({});
+    const [parkingDetails, setShowParkingDetails] = useState({});
     const [totalPayment, setTotalPayment] = useState(0);
-    
+    const [totalDuration, setTotalDuration] = useState(0)
+    const [open, setOpen] = useState(false);
+
     const setEntryPoint = (entryPoint) => {
         setSelectedEntryPoint(entryPoint)
     }   
@@ -35,7 +41,17 @@ const Parking = () => {
         setSelectedSlot({})
     }
 
-    const park = (vehicleType) => {
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedChoices("");
+        setSelectedEntryPoint("");
+        setTotalDuration(0);
+        setTotalPayment(0);
+        setSelectedSlot({});
+        setShowParkingDetails({});
+    };
+
+    const park = (vehicleType, plateNumber) => {        
         // get the parking entry point 
         const entryData = parkingComplex.find((entryPoint) => {
             return entryPoint.name === selectedEntryPoint;
@@ -52,7 +68,8 @@ const Parking = () => {
                         ...obj, 
                         occupied: true,
                         dateParked: new Date(),
-                        occupyingType: vehicleType 
+                        occupyingType: vehicleType, 
+                        currentOccupyingCar: plateNumber
                     }
                     // return the selected allocated slot
                     return allocatedSlot;
@@ -72,11 +89,13 @@ const Parking = () => {
         parkingComplex[indexOfEntryPoint] = newParkingComplex;
 
         // state data to state
+        setParkingHistory([...parkingHistory, { plateNumber: plateNumber, date: new Date() }])
         setSelectedSlot(allocatedSlot)
         setParkingComplex(parkingComplex);
     }
 
-    const unPark = (parkingSlotName, selectedEntryPoint) => {
+    const unPark = (parkingSlotName, selectedEntryPoint, plateNumber) => {
+        setOpen(true);
          // get the parking entry point 
         const entryData = parkingComplex.find((entryPoint) => {
             return entryPoint.name === selectedEntryPoint;
@@ -85,16 +104,18 @@ const Parking = () => {
         let allocatedSlot;
 
         const newFitSlots = entryData.slots.map(obj => {
+            
             if(obj.name === parkingSlotName) {
-                // calculate parking duration
+                
                 const price = calculate(obj.dateParked, obj.parkingType);
-                setTotalPayment(price);
-
+                setTotalPayment(price);               
+                
                 allocatedSlot = {
                     ...obj, 
                     occupied: false,
                     dateParked: null,
                     occupyingType: "",
+                    currentOccupyingCar: ""
                 }
                 // return the selected allocated slot
                 return allocatedSlot;
@@ -113,6 +134,8 @@ const Parking = () => {
         parkingComplex[indexOfEntryPoint] = newParkingComplex;
 
         // state data to state
+        setParkingHistory([...parkingHistory, { plateNumber: plateNumber, date: new Date() }])
+        setShowParkingDetails(allocatedSlot);
         setParkingComplex(parkingComplex);
     }
 
@@ -132,8 +155,10 @@ const Parking = () => {
             // reference for calculation
             timeDiff = Math.abs(Math.round(timeDiff));
         }
-        
-        if(timeDiff > 3) {
+        // set total duration for ui display
+        setTotalDuration(timeDiff);
+
+        if(timeDiff > 3 && timeDiff < 24) {
             let exceessTime = timeDiff - 3;
             // get total payables per excess time based on the parking size
             if(parkingType === "SP") {
@@ -147,13 +172,17 @@ const Parking = () => {
 
         // check if time diff exceeds the 24 hour limit
         if(timeDiff > 24) {
-            const exceessTime = timeDiff - 24;
+            let numberOfDays = timeDiff / 24;
+            numberOfDays = Math.abs(Math.round(numberOfDays));
+            let excessHours = timeDiff - 24 * numberOfDays;
+            
+
             if(parkingType === "SP") {
-                totalPayables = 5000 + 20 * exceessTime;
+                totalPayables = (5000 * numberOfDays) + (20 * excessHours);
             } else if( parkingType === "MP") {
-                totalPayables = 5000 + 60 * exceessTime;
+                totalPayables = (5000 * numberOfDays) + (60 * excessHours);
             } else {
-                totalPayables = 5000 + 100 * exceessTime;
+                totalPayables = (5000 * numberOfDays) + (100 * excessHours);
             }
 
         }
@@ -162,14 +191,17 @@ const Parking = () => {
     }
 
     useEffect(() => {
-        setChoicesSelection(defaultActions)
+        // set all constants
+        setChoicesSelection(defaultActions);
         setvehicleTypes(defaultVehicleTypes);
-        setParkingComplex(ParkingSlots)
+        setParkingComplex(ParkingSlots);
+        setEntryPoints(entryPointsChoices);
+        setParkingHistory(parkingHistoryList);
+
     }, [vehicleTypes]);
 
     return (
         <div>
-            <p>{totalPayment}</p>
             {
                 selectedChoice === "" && 
                 <Menu
@@ -230,6 +262,19 @@ const Parking = () => {
                     setSelectedChoices={setSelectedChoices}
                 />
             }
+            {
+                selectedChoice === "Price" &&
+                <Pricing
+                    setSelectedChoices={setSelectedChoices}
+                />
+            }
+            <ExitDialog
+                open={open}
+                totalDuration={totalDuration}
+                totalPayment={totalPayment}
+                content={parkingDetails}
+                handleClose={handleClose}
+            />
         </div>
     );
 }

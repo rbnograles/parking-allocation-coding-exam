@@ -19,7 +19,7 @@ const ParkingMap = ({ parkingComplex, setSelectedChoices, action }) => {
                                                 <div 
                                                     className='parking-slot-container' 
                                                     key={i}
-                                                    onClick={() => { action(innerSlot.name, slot.name)}}
+                                                    onClick={() => { action(innerSlot.name, slot.name, innerSlot.currentOccupyingCar)}}
                                                 >
                                                     <p style={{ color: !innerSlot.occupied ? "#4caf50" : "#ff1744" }}>
                                                         <b>{innerSlot.name} - {innerSlot.occupied ? "Occupied" : "Vacant"}</b>

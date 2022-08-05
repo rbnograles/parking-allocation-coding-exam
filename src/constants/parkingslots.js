@@ -10,7 +10,8 @@ export const ParkingSlots = [
                 occupyingType: "S",
                 col: 1,
                 row: 1,
-                dateParked: new Date("August 4, 2022 03:00:00"),
+                dateParked: new Date("August 1, 2022 03:00:00"),
+                currentOccupyingCar: "XYZ"
             },
             {
                 name: "A12",
@@ -259,3 +260,10 @@ export const ParkingSlots = [
         ],
     }
 ];
+
+export const parkingHistoryList = [
+    {
+        plateNumber: "XYZ",
+        date: new Date("August 5, 2022 13:02:00"),
+    }
+]
