@@ -4,12 +4,13 @@ export const ParkingSlots = [
         slots: [
             {
                 name: "A11",
-                occupied: false,
+                occupied: true,
                 parkingType: "SP",
                 vehicleSizedLimit: ["S"],
+                occupyingType: "S",
                 col: 1,
                 row: 1,
-                dateParked: null,
+                dateParked: new Date("August 4, 2022 03:00:00"),
             },
             {
                 name: "A12",

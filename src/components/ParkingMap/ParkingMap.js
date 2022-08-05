@@ -1,9 +1,11 @@
 import React from 'react';
 import Button from "@mui/material/Button"
+import Typography from '@mui/material/Typography';
 
-const ParkingMap = ({ parkingComplex, setSelectedChoices }) => {
+const ParkingMap = ({ parkingComplex, setSelectedChoices, action }) => {
     return (
         <>
+            <Typography sx={{ fontSize: 20, fontWeight: "700", marginBottom: 5 }}>XYZ Corporation Parking Complex</Typography>
             <div style={{ display:"flex", flexDirection: "row"}}>
                 {
                     parkingComplex.map((slot , i) => {
@@ -14,17 +16,25 @@ const ParkingMap = ({ parkingComplex, setSelectedChoices }) => {
                                     {
                                         slot.slots.map((innerSlot, i) => {
                                             return(
-                                                <div className='parking-slot-container' key={i}>
-                                                    <p>{innerSlot.name} - <b>{innerSlot.occupied ? "Occupied" : "Vacant"}</b></p>
-                                                    <p>For: {" "} 
-                                                        {
-                                                            innerSlot.parkingType === "SP"  
-                                                            ? "Small" 
-                                                            : innerSlot.parkingType === "MP" 
-                                                            ? "Medium" 
-                                                            : "Large" 
-                                                        } 
-                                                        {" "} Vehicles Only
+                                                <div 
+                                                    className='parking-slot-container' 
+                                                    key={i}
+                                                    onClick={() => { action(innerSlot.name, slot.name)}}
+                                                >
+                                                    <p style={{ color: !innerSlot.occupied ? "#4caf50" : "#ff1744" }}>
+                                                        <b>{innerSlot.name} - {innerSlot.occupied ? "Occupied" : "Vacant"}</b>
+                                                    </p>
+                                                    <p>
+                                                        <b>
+                                                            {
+                                                                innerSlot.parkingType === "SP"  
+                                                                ? "Small" 
+                                                                : innerSlot.parkingType === "MP" 
+                                                                ? "Medium" 
+                                                                : "Large" 
+                                                            } 
+                                                            {" "} Vehicles Only
+                                                        </b>
                                                     </p>
                                                 </div>
                                             )

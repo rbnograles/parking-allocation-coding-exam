@@ -10,6 +10,10 @@ export const defaultActions = [
     {
         action: "Map",
         label: "Check Parking Availability"
+    },
+    {
+        action: "Price",
+        label: "Check Parking Pricing"
     }
 ]
 
@@ -28,3 +32,20 @@ export const defaultVehicleTypes = [
     }
 ]
 
+export const paymentRates = [
+    {
+        type: "SP",
+        label: "20 Pesos / Hour",
+        prices: 20
+    },
+    {
+        type: "MP",
+        label: "60 Pesos / Hour",
+        prices: 60
+    },
+    {
+        type: "LP",
+        label: "100 Pesos / Hour",
+        prices: 100
+    }
+]

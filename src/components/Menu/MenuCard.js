@@ -7,12 +7,13 @@ import Typography from '@mui/material/Typography';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import CarRepairIcon from '@mui/icons-material/CarRepair';
 import MapIcon from '@mui/icons-material/Map';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const BasicCard = ({ action, label, setSelectedChoices }) => {
     return (
         <Card sx={{ minWidth: 275 }}>
             <CardContent>
-                <Typography sx={{ fontSize: 20, fontWeight: "600" }} gutterBottom>
+                <Typography sx={{ fontSize: 18, fontWeight: "600" }} gutterBottom>
                     { label }
                 </Typography>
                 {
@@ -23,6 +24,9 @@ const BasicCard = ({ action, label, setSelectedChoices }) => {
                 }
                 {
                     action === "Map" && <MapIcon className='card-icon'/>
+                }
+                {
+                    action === "Price" && <AttachMoneyIcon className='card-icon'/>
                 }
             </CardContent>
             <CardActions style={{ justifyContent: "flex-end"}}>
