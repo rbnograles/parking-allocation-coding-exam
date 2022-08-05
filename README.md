@@ -1,4 +1,4 @@
-# Parking Allocation System - Singlife Ph Coding Exam
+# Parking Allocation System - Coding Exam
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
